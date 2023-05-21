@@ -76,7 +76,7 @@ function ipcTransportRendererFactory(logger) {
   });
 
   function transport(message) {
-    if (!window.__electronLog) {
+    if (!logger.__electronLog && !window.__electronLog) {
       logger.processMessage(
         {
           data: ['electron-log: logger isn\'t initialized in the main process'],
@@ -86,9 +86,9 @@ function ipcTransportRendererFactory(logger) {
       );
       return;
     }
-
+    const electronLog = logger.__electronLog || window.__electronLog
     try {
-      __electronLog.sendToMain(transport.serializeFn(message, {
+      electronLog.sendToMain(transport.serializeFn(message, {
         depth: transport.depth,
       }));
     } catch (e) {
